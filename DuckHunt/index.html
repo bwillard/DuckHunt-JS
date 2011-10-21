@@ -2,12 +2,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<title>Duck Hunt JS</title>
+<title>Duck Hunt JS Mutliplayer</title>
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
 <link rel="stylesheet" type="text/css" href="style.css"/>
+<script src="http://127.0.0.1:3000/xstreamlyClient.js"></script>
 <script src="scripts/jquery.js"></script>
 <script src="scripts/jquery.color.js"></script>
-
+<script src="scripts/multiplayer.js"></script>
 <script src="scripts/duckhunt.js"></script>
 <script src="scripts/jquery.spritely-0.6.js" type="text/javascript"></script>
 <script>
@@ -18,7 +19,7 @@
 </style>
 </head>
 <body>
-<div id="header"><h1>Duck Hunt via HTML5 + JavaScript<br/><small>with level creator!</small></h1></div>
+<div id="header"><h1>Duck Hunt via HTML5 + JavaScript<br/><small>(multiplayer)</small></h1></div>
 <div onClick="muteAll();" id="mute" style="cursor:pointer;z-index:5;width:900px;margin:0 auto;"><small>MUTE</small></div>
 <div id="gameField">
 
@@ -49,11 +50,31 @@ Level 1
 </div>
 
 <div id="levelCreate" style="width:900px;margin:0 auto;"><br/>
-<strong>Level Creator:</strong><br/>
-Waves: <input id="LCwaves" name="LCwaves" size="3" type="text" value="1"/> &nbsp; &nbsp; Starting Ducks: <input name="LCducks" id="LCducks" size="3" type="text" value="2"/> &nbsp; &nbsp; Starting Bullets: <input type="text" name="LCbullets" id="LCbullets" size="3" value="4"/> &nbsp; &nbsp; Wave Time (sec): <input type="text" name="LCwavetime" id="LCwavetime" size="3" value="10"/> &nbsp; &nbsp; Difficulty: <input type="text" name="LCdif" id="LCdif" size="3" value="5"/>
-<div id="doit" style="margin-left:15px;display:inline;padding:5px;border:solid;width:100px;text-align:center;cursor:pointer;" onClick="makeLevel()">Bring It On</div>
+<strong>Player Finder:</strong><br/>
+
 <br/><br/>
-<small>It's probably worth mentioning that it's very possible to crash your browser if you're overzealous with the level creator.  Wave time is the amount of time before the ducks fly away.  Difficulty is rated from 1-10 and controls the speed of the ducks.  Anything over 8 is kind of ridiculous. The bullet and duck counters have a maximum size- you will receive everything you configure but they may not all display if the number of bullets or ducks is too high.</small>
+
+<form>
+Single Player: <input type="radio" name="gameStyle" value="1" />
+<div id="singlePlayer">    <input type="button" value="Start Game" onclick="startSinglePlayer()" />    <br /><br />    <strong>Level Creator:</strong><br/>
+    Waves: <input id="LCwaves" name="LCwaves" size="3" type="text" value="1"/><br />    Starting Ducks: <input name="LCducks" id="LCducks" size="3" type="text" value="2"/><br />    Starting Bullets: <input type="text" name="LCbullets" id="LCbullets" size="3" value="4"/><br />    Wave Time (sec): <input type="text" name="LCwavetime" id="LCwavetime" size="3" value="10"/><br />    Difficulty: <input type="text" name="LCdif" id="LCdif" size="3" value="5"/><br />
+    <input type="button" value="Bring It"  onClick="makeLevel()"/>   </div>
+<br /><br />
+Multi Player:<input type="radio" name="gameStyle" value="2" checked="checked" />
+<div id="multiPlayer">
+    <div id='sign-in'>
+        UserName: <input type ="text" id="user-name"/>
+        <input type="button" value="sign in" id="sign-in-button" />
+    </div>
+    <div>
+        Users looking for games:
+        <ul id='users-list'>
+        </ul>
+    </div>
+</div>
+</form>
+
+<small>This is based on the amazing work of <a href="http://mattsurabian.com/duckhunt/">Matt Surabian</a>.  The game is entirely his work, all I did was to use <a href="http://x-stream.ly/">x-stream.ly</a> to add multi-player support to it.</small>
 </div>
 
 
