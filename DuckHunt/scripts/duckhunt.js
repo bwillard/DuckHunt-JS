@@ -79,7 +79,8 @@ var theGame={
 	},
 	updateScore: function(adjust){
 		theGame.score+=adjust;
-		$("#scoreboard").html(addCommas(theGame.score.toString()));	
+		$("#scoreboard-p1").html("P1: "+addCommas(theGame.score.toString()));
+		$("#scoreboard-p2").html("P2: "+addCommas(theGame.score.toString()));	
 	},
 	loadLevel: function(name,waves,ducks,dSpeed,bullets,time){
 		
@@ -237,8 +238,9 @@ var theGame={
 		
 		for(var i=0; i<shotsLeft; i++){
 			bulletsText += '<img src="images/bullet.png" align="absmiddle"/>';	
-		}	
-		$("#ammo").html("<strong>Shots: </strong>"+bulletsText);
+		}
+		$("#ammo-p1").html("<strong>P1 Shots: </strong>" + bulletsText);
+		$("#ammo-p2").html("<strong>P2 Shots: </strong>" + bulletsText);
 		
 	},
 	shootGun: function(){

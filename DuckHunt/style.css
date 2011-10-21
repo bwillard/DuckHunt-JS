@@ -92,13 +92,22 @@ body{
 	left:-400px;
 	z-index:5;
 }
-#ammo{
+#ammo-p1{
 	color:#ffffff;
 	font-size:10px;	
 	text-transform:uppercase;
 	padding-left:10px;
 	position:absolute;
 	top:5px;
+	left:40px;
+}
+#ammo-p2{
+	color:#ffffff;
+	font-size:10px;	
+	text-transform:uppercase;
+	padding-left:10px;
+	position:absolute;
+	top:25px;
 	left:40px;
 }
 #waves{
@@ -141,11 +150,20 @@ body{
 	text-align:center;
 	cursor:pointer;
 }
-#scoreboard{
+#scoreboard-p1{
 	font-size:16px;
 	color:#ffffff;	
 	position:absolute;
 	right:10px;
 	font-weight:bold;
-	top:3px;
+	top:5px;
+}
+
+#scoreboard-p2{
+	font-size:16px;
+	color:#ffffff;	
+	position:absolute;
+	right:10px;
+	font-weight:bold;
+	top:25px;
 }
