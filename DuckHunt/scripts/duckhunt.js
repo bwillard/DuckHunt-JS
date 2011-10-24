@@ -201,8 +201,8 @@ var theGame = {
             theGame.stopGameBecauseOfPlayerLeaving = false;
             theGame.players.pop();
             $(".tryAgain").css("display", "none");
-            $("#ammo-p1").html("");
-            $("#scoreboard-p1").html("");
+            $("#ammo-p2").html("");
+            $("#scoreboard-p2").html("");
             theGame.multiplayerGame.signIn();
             return;
         }
