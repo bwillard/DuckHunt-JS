@@ -256,6 +256,7 @@ var theGame = {
                     $(".tryAgain").css("display", "none");
                 }
                 $("#gameOver").css("display", "block");
+                $('#levelCreate').show();
             } else {
                 if (theGame.isMaster) {
                     theGame.currentLevel++;
@@ -626,6 +627,7 @@ function tryAgain(){
 
 function startSinglePlayer() {
     theGame.loadDefaultLevel(theGame.currentLevel);
+    $('#levelCreate').hide();
 }
 
 function startMultiPlayer(multiplayerGame,isMaster) {
@@ -633,6 +635,7 @@ function startMultiPlayer(multiplayerGame,isMaster) {
     if (isMaster) {
         theGame.loadDefaultLevel(theGame.currentLevel);
     }
+    $('#levelCreate').hide();
 }
 
 function otherPlayerLeft() {
