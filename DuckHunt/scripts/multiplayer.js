@@ -7,7 +7,7 @@ var multiplayerGame = {
     inGame: false,
     opponentId: undefined,
     oppenentName: undefined,
-    signIn: function () {
+    signIn: function() {
         multiplayerGame.userName = $("#user-name").val();
         if (!multiplayerGame.userName) {
             window.alert('please provide a user name');
@@ -18,15 +18,15 @@ var multiplayerGame = {
                 { includeMyMessages: true, userInfo: { name: multiplayerGame.userName} });
         multiplayerGame.myId = multiplayerGame.lobbyChannel.memberId;
 
-        var adduser = function (id, name) {
+        var adduser = function(id, name) {
             if (id !== multiplayerGame.lobbyChannel.memberId) {
                 log('adding user ' + name + ' ' + id + ' my id ' + multiplayerGame.lobbyChannel.memberId);
                 $('#users-list').append('<li id="user-' + id + '"><a href="#" onclick="multiplayerGame.requestGame(' + id + ')">Join ' + name + '</a></li>');
             }
         };
 
-        multiplayerGame.lobbyChannel.bind('xstreamly:subscription_succeeded', function (members) {
-            members.each(function (member) {
+        multiplayerGame.lobbyChannel.bind('xstreamly:subscription_succeeded', function(members) {
+            members.each(function(member) {
                 adduser(member.id, member.memberInfo.name);
             });
             //its just me :(
@@ -35,12 +35,12 @@ var multiplayerGame = {
             }
         });
 
-        multiplayerGame.lobbyChannel.bind('xstreamly:member_added', function (member) {
+        multiplayerGame.lobbyChannel.bind('xstreamly:member_added', function(member) {
             adduser(member.id, member.memberInfo.name);
             $("#no-users-yet").css("display", "none");
         });
 
-        multiplayerGame.lobbyChannel.bind('xstreamly:member_removed', function (member) {
+        multiplayerGame.lobbyChannel.bind('xstreamly:member_removed', function(member) {
             log('removing member: ' + member.memberInfo.name);
             $('#user-' + member.id).remove();
         });
@@ -50,71 +50,78 @@ var multiplayerGame = {
 
         //listen for requests to join games and acknowldegements
         //of requests we sent out
-        multiplayerGame.lobbyChannel.bind(multiplayerGame.myId.toString(), function (data) {
+        multiplayerGame.lobbyChannel.bind(multiplayerGame.myId.toString(), function(data) {
             if (data.type === 'request') {
                 if (!multiplayerGame.inGame) {
-                    multiplayerGame.oppenentName = data.myName;
-                    multiplayerGame.lobbyChannel.trigger(data.myId, { type: 'ack', myId: multiplayerGame.myId, channelName: data.channelName,myName :multiplayerGame.userName });
-                    multiplayerGame.joinGame(data.myId, data.channelName,false);
+                    if (confirm('start game with ' + data.myName + '?')) {
+                        multiplayerGame.oppenentName = data.myName;
+                        multiplayerGame.lobbyChannel.trigger(data.myId, { type: 'ack', myId: multiplayerGame.myId, channelName: data.channelName, myName: multiplayerGame.userName });
+                        multiplayerGame.joinGame(data.myId, data.channelName, false);
+                    } else {
+                        multiplayerGame.lobbyChannel.trigger(data.myId, { type: 'nack', myId: multiplayerGame.myId, channelName: data.channelName, myName: multiplayerGame.userName });
+                    }
                 }
             }
             else if (data.type === 'ack') {
                 multiplayerGame.oppenentName = data.myName;
-                multiplayerGame.joinGame(data.myId, data.channelName,true);
+                multiplayerGame.joinGame(data.myId, data.channelName, true);
+            }
+            else if (data.type === 'nack') {
+                alert('sorry ' + data.myName + ' did not want to play with you, try picking a diffrent user.');
             }
         });
 
     },
-    requestGame: function (memberId) {
+    requestGame: function(memberId) {
         //send them a message reqesting to join a game with them
-        multiplayerGame.lobbyChannel.trigger(memberId.toString(), { type: 'request', myId: multiplayerGame.myId, channelName: memberId + '-' + multiplayerGame.myId, myName:multiplayerGame.userName });
+        multiplayerGame.lobbyChannel.trigger(memberId.toString(), { type: 'request', myId: multiplayerGame.myId, channelName: memberId + '-' + multiplayerGame.myId, myName: multiplayerGame.userName });
 
     },
-    joinGame: function(memberId, channelName,isMaster) {
+    joinGame: function(memberId, channelName, isMaster) {
         multiplayerGame.opponentId = memberId;
         multiplayerGame.inGame = true;
-        if(multiplayerGame.lobbyChannel){
+        if (multiplayerGame.lobbyChannel) {
             multiplayerGame.lobbyChannel.close();
             multiplayerGame.lobbyChannel = undefined;
         }
         multiplayerGame.gameChannel = multiplayerGame.xstreamly.subscribe(channelName, { userId: multiplayerGame.myId, userInfo: { name: multiplayerGame.userName} });
 
-        multiplayerGame.gameChannel.bind('xstreamly:subscription_succeeded', function (members) {
-            members.each(function (member) {
+        multiplayerGame.gameChannel.bind('xstreamly:subscription_succeeded', function(members) {
+            members.each(function(member) {
                 if (member.id === multiplayerGame.opponentId) {
                     multiplayerGame.startGame(isMaster);
                 }
             });
         });
 
-        multiplayerGame.gameChannel.bind('xstreamly:member_added', function (member) {
+        multiplayerGame.gameChannel.bind('xstreamly:member_added', function(member) {
             if (member.id === multiplayerGame.opponentId) {
                 multiplayerGame.startGame(isMaster);
             }
         });
 
-        multiplayerGame.gameChannel.bind('xstreamly:member_removed', function (member) {
+        multiplayerGame.gameChannel.bind('xstreamly:member_removed', function(member) {
             if (member.id === multiplayerGame.opponentId) {
                 multiplayerGame.stopGame();
             }
         });
-        
-        multiplayerGame.gameChannel.bind('gameEvent',function (data){
-            if(multiplayerGame.gameStateUpdated){
+
+        multiplayerGame.gameChannel.bind('gameEvent', function(data) {
+            if (multiplayerGame.gameStateUpdated) {
                 multiplayerGame.gameStateUpdated(data);
             }
         });
     },
-    startGame: function (isMaster) {
-        window.startMultiPlayer(multiplayerGame,isMaster);
+    startGame: function(isMaster) {
+        window.startMultiPlayer(multiplayerGame, isMaster);
     },
-    stopGame: function () {
+    stopGame: function() {
         window.otherPlayerLeft();
     },
-    updateState: function (data) {
+    updateState: function(data) {
         multiplayerGame.gameChannel.trigger('gameEvent', data);
     },
-    gameStateUpdated:undefined//looking for a func(action,data)
+    gameStateUpdated: undefined//looking for a func(action,data)
 };
 
 $(function () {
