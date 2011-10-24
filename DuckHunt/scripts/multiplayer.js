@@ -31,10 +31,15 @@ var multiplayerGame = {
             members.each(function(member) {
                 adduser(member.id, member.memberInfo.name);
             });
+            //its just me :(
+            if(members.count===1){
+                $("#no-users-yet").css("display", "block");
+            }
         });
 
         lobbyChannel.bind('xstreamly:member_added', function(member) {
             adduser(member.id, member.memberInfo.name);
+            $("#no-users-yet").css("display", "none");
         });
 
         lobbyChannel.bind('xstreamly:member_removed', function(member) {
