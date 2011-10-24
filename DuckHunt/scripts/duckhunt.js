@@ -4,9 +4,21 @@
 		A first draft...
 **************************************************/
 var levelArray = [["Level 1",3,2,5,3,13],["Level 2",5,3,6,4,10],["Level 3",6,3,7,4,10],["Level 4",3,10,7,11,18],["Level 5",5,2,8,3,13], ["Level 6",1,15,8,15,25]];
-$(document).ready(function(){
-	//mute the sounds for debuging	
-	$(".sounds").attr("volume","0");
+$(document).ready(function() {
+    //mute the sounds for debuging
+    $(".sounds").attr("volume", "0");
+
+    $('.game-style').change(function(eventData) {
+        if (eventData.currentTarget.value == 1) {
+            $('.singleplayer-input').attr('disabled', null);
+            $('.multipalyer-input').attr('disabled', 'disabled');
+        }
+        else {
+            $('.singleplayer-input').attr('disabled', 'disabled');
+            $('.multipalyer-input').attr('disabled', null);
+        }
+    });
+    $('.singleplayer-input').attr('disabled', 'disabled');
 });
 var mute= 0;
 function muteAll(){

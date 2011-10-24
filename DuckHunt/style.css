@@ -167,3 +167,16 @@ body{
 	font-weight:bold;
 	top:25px;
 }
+
+#gameDefinition td{
+	vertical-align:top;
+}
+
+#game-definition td{
+	vertical-align:top;
+}
+
+.level-definition{
+	width:150px;
+	float:left;
+}
