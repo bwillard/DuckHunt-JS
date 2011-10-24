@@ -124,7 +124,7 @@ var theGame = {
         theGame.stopGameBecauseOfPlayerLeaving = true;
         if (!theGame.isMaster) {
             //if we aren't the master there is no timer to end the game
-            theGame.flyAway();
+            theGame.flyAway(true);
         }
     },
     openingScreen: function() {
