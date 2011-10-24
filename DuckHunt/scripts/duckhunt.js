@@ -125,6 +125,7 @@ var theGame = {
         if (!theGame.isMaster) {
             //if we aren't the master there is no timer to end the game
             theGame.flyAway(true);
+            theGame.doWave(theGame.currentWave,true);
         }
     },
     openingScreen: function() {
