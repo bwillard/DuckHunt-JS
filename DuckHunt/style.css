@@ -180,3 +180,7 @@ body{
 	width:150px;
 	float:left;
 }
+
+#find-players{
+	display:none;
+}

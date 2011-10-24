@@ -48,6 +48,7 @@ var multiplayerGame = {
         });
 
         $('#sign-in').hide();
+        $('#find-players').show();
 
         //listen for requests to join games and acknowldegements
         //of requests we sent out
