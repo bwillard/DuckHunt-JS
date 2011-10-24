@@ -3,7 +3,7 @@
 		by Matthew Surabian - MattSurabian.com
 		A first draft...
 **************************************************/
-var levelArray = [["Level 1",3,2,5,3,13],["Level 2",5,3,6,4,10],["Level 3",6,3,7,4,10],["Level 4",3,10,7,11,18],["Level 5",5,2,8,3,13], ["Level 6",1,15,8,15,25]];
+var levelArray = [["Level 1",3,2,5,3,13]/*,["Level 2",5,3,6,4,10],["Level 3",6,3,7,4,10],["Level 4",3,10,7,11,18],["Level 5",5,2,8,3,13], ["Level 6",1,15,8,15,25]*/];
 $(document).ready(function() {
     //mute the sounds for debuging
     //$(".sounds").attr("volume", "0");
@@ -205,6 +205,7 @@ var theGame = {
             $("#scoreboard-p2").html("");
             theGame.multiplayerGame.signIn();
             $('#levelCreate').show();
+            theGame.multiplayerGame.finishGame();
             return;
         }
 
@@ -258,7 +259,8 @@ var theGame = {
                     }
                     theGame.multiplayerGame.signIn();
                     $(".tryAgain").css("display", "none");
-                    $("#game-definition").sho
+                    $("#game-definition").show();
+                    theGame.multiplayerGame.finishGame();
                 }
                 $("#gameOver").css("display", "block");
                 $('#levelCreate').show();
@@ -632,6 +634,7 @@ function makeLevel(){
 	var LCdif = parseInt($("#LCdif").attr("value"));
 	$("#sniffDog").stop();
 	theGame.isMaster = true;
+	theGame.multiplayerGame = undefined;
 	$('#levelCreate').hide();
 	theGame.loadLevel("Custom Level",LCwaves,LCducks,LCdif,LCbullets,LCwavetime);		
 }
@@ -642,6 +645,7 @@ function tryAgain(){
 
 function startSinglePlayer() {
     theGame.isMaster = true;
+    theGame.multiplayerGame = undefined;
     theGame.loadDefaultLevel(theGame.currentLevel);
     $('#levelCreate').hide();
 }

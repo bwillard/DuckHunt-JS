@@ -19,7 +19,7 @@ var multiplayerGame = {
         multiplayerGame.myId = multiplayerGame.lobbyChannel.memberId;
 
         var adduser = function(id, name) {
-        if (multiplayerGame.lobbyChannel && id !== multiplayerGame.lobbyChannel.memberId) {
+            if (multiplayerGame.lobbyChannel && id !== multiplayerGame.lobbyChannel.memberId) {
                 $('#users-list').append('<li id="user-' + id + '"><a href="#" onclick="multiplayerGame.requestGame(' + id + ')">Join ' + name + '</a></li>');
             }
         };
@@ -105,19 +105,36 @@ var multiplayerGame = {
         });
 
         multiplayerGame.gameChannel.bind('gameEvent', function(data) {
-            if (multiplayerGame.gameStateUpdated) {
-                multiplayerGame.gameStateUpdated(data);
+            if (data.action && data.action === 'gameOver') {
+                multiplayerGame.inGame = false;
+            }
+            else {
+                if (multiplayerGame.gameStateUpdated) {
+                    multiplayerGame.gameStateUpdated(data);
+                }
             }
         });
     },
     startGame: function(isMaster) {
         window.startMultiPlayer(multiplayerGame, isMaster);
     },
+    finishGame: function() {
+        if (multiplayerGame.gameChannel) {
+            multiplayerGame.gameChannel.trigger('gameEvent', { action: 'gameOver' });
+            multiplayerGame.gameChannel.close();
+        }
+        multiplayerGame.gameStateUpdated = undefined;
+        multiplayerGame.gameChannel = undefined;
+    },
     stopGame: function() {
-        window.otherPlayerLeft();
+        if (multiplayerGame.inGame) {
+            window.otherPlayerLeft();
+        }
     },
     updateState: function(data) {
-        multiplayerGame.gameChannel.trigger('gameEvent', data);
+        if (multiplayerGame.gameChannel) {
+            multiplayerGame.gameChannel.trigger('gameEvent', data);
+        }
     },
     gameStateUpdated: undefined//looking for a func(action,data)
 };
