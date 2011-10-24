@@ -402,6 +402,7 @@ var theGame = {
             document.getElementById("quacking").pause();
             clearInterval(theGame.quackID);
         }
+
         setTimeout(function() {
             duck.spState(6);
             duck.spStart();
@@ -411,7 +412,14 @@ var theGame = {
                 document.getElementById("thud").play();
                 duck.destroy();
                 duck.attr("class", "deadDuck");
-                theGame.dogPopUp();
+                if (!remoteAction) {
+                    theGame.dogPopUp();
+                }
+                else {
+                    if (theGame.ducksAlive == 0) {
+                        setTimeout(function() { theGame.waveCleared(); }, 1000);
+                    }
+                }
             });
         }, 500);
 
