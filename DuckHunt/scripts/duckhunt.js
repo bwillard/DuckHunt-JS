@@ -346,6 +346,7 @@ var theGame = {
     shootGun: function(remoteAction) {
         if (!remoteAction) {
             if (theGame.players[0].shotsThisWave == theGame.levelBullets) {
+                document.getElementById("gunEmpty").play();
                 return;
             }
             theGame.players[0].shotsThisWave++;
@@ -390,7 +391,10 @@ var theGame = {
         duck.unbind();
         duck.addClass("deadSpin");
 
-        if (!remoteAction) {
+        if (remoteAction) {
+            document.getElementById("rats").play();
+        } else {
+        
             theGame.updateScore(theGame.pointsPerDuck);
         }
 
