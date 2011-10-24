@@ -103,7 +103,7 @@ var multiplayerGame = {
         window.startMultiPlayer(self,isMaster);
     },
     stopGame: function() {
-        log('stopping game');
+        window.otherPlayerLeft();
     },
     updateState: function(data) {
         gameChannel.trigger('gameEvent', data);

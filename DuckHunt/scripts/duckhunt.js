@@ -56,6 +56,7 @@ var theGame = {
     levelInProg: false,
     flyAwayProg: false,
     flewAway: false,
+    stopGameBecauseOfPlayerLeaving: false,
     waitingLevel: 0,
     isMaster: true, //use to syncronize level starting and fly away in multiplayer mode
     dogTimer: 0,
@@ -103,7 +104,9 @@ var theGame = {
             }
         }
     },
-
+    otherPlayerLeft: function() {
+        theGame.stopGameBecauseOfPlayerLeaving = true;
+    },
     openingScreen: function() {
         return true;
     },
@@ -156,6 +159,18 @@ var theGame = {
     },
     doWave: function(num) {
         clearInterval(theGame.quackID);
+
+        if (theGame.stopGameBecauseOfPlayerLeaving) {
+            $("#gameOverMessage").html(theGame.players[1].name + " ran away because you are too good, congratulations!");
+            document.getElementById("champSound").play();
+            $("#gameOver").css("display", "block");
+            theGame.stopGameBecauseOfPlayerLeaving = false;
+            theGame.players.pop();
+            $("#ammo-p1").html("");
+            $("#scoreboard-p1").html("");
+            return;
+        }
+
         if (num < theGame.levelWaves) {
             $.each(theGame.players, function(key, player) {
                 player.shotsThisWave = 0;
@@ -492,11 +507,8 @@ var theGame = {
             $("#gameField").animate({
                 backgroundColor: '#fbb4d4'
             }, 900);
-            console.log('Kills this level: ', theGame.killsThisLevel);
-            console.log('ducks this level: ', theGame.levelDucks);
             $(".ducks").each(function() {
                 if (!$(this).hasClass("deadSpin")) {
-                    console.log('adding mised duck');
                     theGame.missesThisLevel++;
                     $("#ducksKilled").append("<img src='images/duckLive.png'/>");
                     var self = $(this);
@@ -606,6 +618,10 @@ function startMultiPlayer(multiplayerGame,isMaster) {
     if (isMaster) {
         theGame.loadDefaultLevel(theGame.currentLevel);
     }
+}
+
+function otherPlayerLeft() {
+    theGame.otherPlayerLeft();
 }
 
 function addCommas(nStr)
