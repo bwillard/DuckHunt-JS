@@ -20,7 +20,6 @@ var multiplayerGame = {
 
         var adduser = function(id, name) {
         if (multiplayerGame.lobbyChannel && id !== multiplayerGame.lobbyChannel.memberId) {
-                log('adding user ' + name + ' ' + id + ' my id ' + multiplayerGame.lobbyChannel.memberId);
                 $('#users-list').append('<li id="user-' + id + '"><a href="#" onclick="multiplayerGame.requestGame(' + id + ')">Join ' + name + '</a></li>');
             }
         };
@@ -41,7 +40,6 @@ var multiplayerGame = {
         });
 
         multiplayerGame.lobbyChannel.bind('xstreamly:member_removed', function(member) {
-            log('removing member: ' + member.memberInfo.name);
             $('#user-' + member.id).remove();
         });
 
