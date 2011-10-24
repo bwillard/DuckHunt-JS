@@ -227,7 +227,7 @@ var theGame = {
                         $("#gameOverMessage").html("You are a champion!");
                         document.getElementById("champSound").play();
                     }
-                    
+
                 } else {
                     if (theGame.players[0].score > theGame.players[1].score) {
                         $("#gameOverMessage").html("You beat " + theGame.players[1].name + ", congratulations!");
@@ -297,6 +297,10 @@ var theGame = {
             });
             $(this).bind("mousedown", function() { theGame.shootDuck($(this).attr('id'), false) });
         });
+
+        //is seems if you bind twice without unbinding it doesn't work
+        //so make sure to unbind first
+        $("#gameField").unbind();
         $("#gameField").bind("mousedown", function() { theGame.shootGun(false); });
         document.getElementById("quacking").play();
         theGame.quackID = setInterval(function() { document.getElementById("quacking").play(); }, 3000);
