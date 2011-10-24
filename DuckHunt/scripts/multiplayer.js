@@ -74,8 +74,10 @@ var multiplayerGame = {
     joinGame: function(memberId, channelName,isMaster) {
         opponentId = memberId;
         inGame = true;
-        lobbyChannel.close();
-        lobbyChannel = undefined;
+        if(lobbyChannel){
+            lobbyChannel.close();
+            lobbyChannel = undefined;
+        }
         gameChannel = this.xstreamly.subscribe(channelName, { userId: this.myId, userInfo: { name: this.userName} });
 
         gameChannel.bind('xstreamly:subscription_succeeded', function(members) {

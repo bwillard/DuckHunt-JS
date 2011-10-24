@@ -102,6 +102,9 @@ var theGame = {
             else if (data.action === "flyAway") {
                 theGame.flyAway(true);
             }
+            else if (data.action === "doWave") {
+                theGame.doWave(data.customData, true);
+            }
         }
     },
     otherPlayerLeft: function() {
@@ -157,7 +160,20 @@ var theGame = {
         theGame.doWave(theGame.currentWave);
 
     },
-    doWave: function(num) {
+    doWave: function(num, remoteAction) {
+
+        if (theGame.isMaster) {
+            if (remoteAction) {
+                return;
+            } else {
+                theGame.updateMultiplayer("doWave", num);
+            }
+        } else {
+            if (!remoteAction) {
+                return;
+            }
+        }
+
         clearInterval(theGame.quackID);
 
         if (theGame.stopGameBecauseOfPlayerLeaving) {
@@ -201,6 +217,7 @@ var theGame = {
 
             if (gameOver) {
                 if (theGame.players.length === 1) {
+                    $(".tryAgain").css("display", "block");
                     if (skills < 70) {
                         theGame.updateScore(-(theGame.killsThisLevel * theGame.pointsPerDuck));
                         $("#gameOverMessage").html("Are you kidding me with that?");
@@ -210,6 +227,7 @@ var theGame = {
                         $("#gameOverMessage").html("You are a champion!");
                         document.getElementById("champSound").play();
                     }
+                    
                 } else {
                     if (theGame.players[0].score > theGame.players[1].score) {
                         $("#gameOverMessage").html("You beat " + theGame.players[1].name + ", congratulations!");
@@ -218,7 +236,7 @@ var theGame = {
                         $("#gameOverMessage").html(theGame.players[1].name + " beat you, you shold practice more.");
                         document.getElementById("loserSound").play();
                     }
-
+                    $(".tryAgain").css("display", "none");
                 }
                 $("#gameOver").css("display", "block");
             } else {
