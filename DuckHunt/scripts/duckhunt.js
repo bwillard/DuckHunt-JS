@@ -24,6 +24,7 @@ function muteAll(){
 function PlayerState() {
     this.shotsThisWave = 0;
     this.score = 0;
+    this.name = "Player 1";
 }
 
 var theGame = {
@@ -54,6 +55,7 @@ var theGame = {
     clearingWave: false,
     levelInProg: false,
     flyAwayProg: false,
+    flewAway: false,
     waitingLevel: 0,
     isMaster: true, //use to syncronize level starting and fly away in multiplayer mode
     dogTimer: 0,
@@ -82,9 +84,10 @@ var theGame = {
         theGame.multiplayerGame = multiplayerGame;
         theGame.players.push(new PlayerState());
         theGame.isMaster = isMaster;
+        theGame.players[0].name = multiplayerGame.userName;
+        theGame.players[1].name = multiplayerGame.oppenentName;
 
         multiplayerGame.gameStateUpdated = function(data) {
-            console.log('got update ', data);
             theGame.players[1] = data.state;
             if (data.action === "shootGun") {
                 theGame.shootGun(true);
@@ -119,7 +122,6 @@ var theGame = {
     },
 
     loadLevel: function(name, waves, ducks, dSpeed, bullets, time, remoteAction) {
-        console.log('loading level :' + name);
         clearTimeout(theGame.waitingLevel);
         clearTimeout(theGame.dogTimer);
         clearTimeout(theGame.levelTimeID);
@@ -179,40 +181,59 @@ var theGame = {
 
             theGame.releaseTheDucks();
         } else {
+            var skills = (theGame.killsThisLevel / (theGame.killsThisLevel + theGame.missesThisLevel)) * 100;
+            var gameOver = skills < 70 || (theGame.currentLevel + 1) === levelArray.length;
 
-            if ((theGame.currentLevel + 1) < levelArray.length) {
+            if (gameOver) {
+                if (theGame.players.length === 1) {
+                    if (skills < 70) {
+                        theGame.updateScore(-(theGame.killsThisLevel * theGame.pointsPerDuck));
+                        $("#gameOverMessage").html("Are you kidding me with that?");
+                        document.getElementById("loserSound").play();
+                        return false;
+                    } else {
+                        $("#gameOverMessage").html("You are a champion!");
+                        document.getElementById("champSound").play();
+                    }
+                } else {
+                    if (theGame.players[0].score > theGame.players[1].score) {
+                        $("#gameOverMessage").html("You beat " + theGame.players[1].name + ", congratulations!");
+                        document.getElementById("champSound").play();
+                    } else {
+                        $("#gameOverMessage").html(theGame.players[1].name + " beat you, you shold practice more.");
+                        document.getElementById("loserSound").play();
+                    }
 
-                var skills = (theGame.killsThisLevel / (theGame.killsThisLevel + theGame.missesThisLevel)) * 100;
-                if (skills < 70) {
-                    theGame.updateScore(-(theGame.killsThisLevel * theGame.pointsPerDuck));
-                    $("#loser").css("display", "block");
-                    document.getElementById("loserSound").play();
-                    return false;
                 }
-
+                $("#gameOver").css("display", "block");
+            } else {
                 if (theGame.isMaster) {
                     theGame.currentLevel++;
                     setTimeout(function() {
                         theGame.loadDefaultLevel(theGame.currentLevel);
                     }, 2000);
                 }
+            }
+
+            if ((theGame.currentLevel + 1) < levelArray.length) {
+                if (skills < 70) {
+
+                }
 
 
             } else {
-                var skills = (theGame.killsThisLevel / (theGame.killsThisLevel + theGame.missesThisLevel)) * 100;
                 if (skills > 70) {
-                    $("#winner").css("display", "block");
-                    document.getElementById("champSound").play();
+
                 } else {
                     theGame.updateScore(-(theGame.killsThisLevel * theGame.pointsPerDuck));
-                    $("#loser").css("display", "block");
+                    $("#gameOverMessage").html("Are you kidding me with that?");
+                    $("#gameOver").css("display", "block");
                     document.getElementById("loserSound").play();
                     return false;
                 }
             }
 
         }
-
 
     },
     waveCleared: function() {
@@ -247,6 +268,7 @@ var theGame = {
         document.getElementById("quacking").play();
         theGame.quackID = setInterval(function() { document.getElementById("quacking").play(); }, 3000);
         clearTimeout(theGame.levelTimeID);
+        theGame.flewAway = false;
         if (theGame.isMaster) {
             theGame.levelTimeID = setTimeout(theGame.flyAway, theGame.levelTime);
         }
@@ -281,8 +303,8 @@ var theGame = {
                 bulletsText += '<img src="images/bullet.png" align="absmiddle"/>';
             }
             var oneBasedIndex = key + 1;
-            $("#ammo-p" + oneBasedIndex).html("<strong>P" + oneBasedIndex + " Shots: </strong>" + bulletsText);
-            $("#scoreboard-p" + oneBasedIndex).html("P" + oneBasedIndex + ": " + addCommas(item.score.toString()));
+            $("#ammo-p" + oneBasedIndex).html("<strong>" + item.name + " Shots: </strong>" + bulletsText);
+            $("#scoreboard-p" + oneBasedIndex).html(item.name + ": " + addCommas(item.score.toString()));
         });
     },
     shootGun: function(remoteAction) {
@@ -299,15 +321,20 @@ var theGame = {
             theGame.lastBang = 1;
         }
 
-        var outOfAmmo = theGame.ducksAlive > 0;
-        $.each(theGame.players, function(key, player) {
-            outOfAmmo &= (player.shotsThisWave == theGame.levelBullets);
-        });
+        if (theGame.ducksAlive > 0) {
+            if (theGame.players[0].shotsThisWave == theGame.levelBullets) {
+                var everyOneOutOfAmmo = true;
+                $.each(theGame.players, function(key, player) {
+                    everyOneOutOfAmmo &= (player.shotsThisWave == theGame.levelBullets);
+                });
 
-        if (outOfAmmo) {
-            //you're out of bullets and there are still beasts!
-            theGame.outOfAmmo();
+
+                //you're out of bullets and there are still beasts!
+                theGame.outOfAmmo(everyOneOutOfAmmo);
+
+            }
         }
+
         if (!remoteAction) {
             theGame.updateMultiplayer("shootGun");
         }
@@ -437,13 +464,22 @@ var theGame = {
         });
 
     },
-    outOfAmmo: function() {
+    outOfAmmo: function(everyOneOutOfAmmo) {
         $(".ducks").unbind();
         $("#gameField").unbind();
-        theGame.clearingWave = false;
-        setTimeout(theGame.flyAway(), 300);
+        if (everyOneOutOfAmmo) {
+            theGame.clearingWave = false;
+            setTimeout(theGame.flyAway(), 300);
+        }
     },
     flyAway: function(remoteAction) {
+        if (theGame.flewAway) {
+            //already flew away, this can happen if we go out of ammo
+            //around the same time as the timer floy away
+            return;
+        }
+        theGame.flewAway = true;
+
         if (!remoteAction) {
             theGame.updateMultiplayer('flyAway');
         }
@@ -456,8 +492,11 @@ var theGame = {
             $("#gameField").animate({
                 backgroundColor: '#fbb4d4'
             }, 900);
+            console.log('Kills this level: ', theGame.killsThisLevel);
+            console.log('ducks this level: ', theGame.levelDucks);
             $(".ducks").each(function() {
                 if (!$(this).hasClass("deadSpin")) {
+                    console.log('adding mised duck');
                     theGame.missesThisLevel++;
                     $("#ducksKilled").append("<img src='images/duckLive.png'/>");
                     var self = $(this);
@@ -563,7 +602,6 @@ function startSinglePlayer() {
 }
 
 function startMultiPlayer(multiplayerGame,isMaster) {
-    console.log('starting multiplayer game');
     theGame.initMultiplayer(multiplayerGame, isMaster);
     if (isMaster) {
         theGame.loadDefaultLevel(theGame.currentLevel);

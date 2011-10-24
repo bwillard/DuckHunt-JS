@@ -6,6 +6,7 @@ var multiplayerGame = {
     userName: undefined,
     inGame: false,
     opponentId: undefined,
+    oppenentName: undefined,
     self: undefined,
     signIn: function() {
         self = this;
@@ -48,11 +49,13 @@ var multiplayerGame = {
         lobbyChannel.bind(this.myId.toString(), function(data) {
             if (data.type === 'request') {
                 if (!self.inGame) {
-                    lobbyChannel.trigger(data.myId, { type: 'ack', myId: self.myId, channelName: data.channelName });
+                    self.oppenentName = data.myName;
+                    lobbyChannel.trigger(data.myId, { type: 'ack', myId: self.myId, channelName: data.channelName,myName :self.userName });
                     self.joinGame(data.myId, data.channelName,false);
                 }
             }
             else if (data.type === 'ack') {
+                self.oppenentName = data.myName;
                 self.joinGame(data.myId, data.channelName,true);
             }
         });
@@ -60,7 +63,7 @@ var multiplayerGame = {
     },
     requestGame: function(memberId) {
         //send them a message reqesting to join a game with them
-        lobbyChannel.trigger(memberId.toString(), { type: 'request', myId: this.myId, channelName: memberId + '-' + this.myId });
+        lobbyChannel.trigger(memberId.toString(), { type: 'request', myId: this.myId, channelName: memberId + '-' + this.myId, myName:this.userName });
 
     },
     joinGame: function(memberId, channelName,isMaster) {

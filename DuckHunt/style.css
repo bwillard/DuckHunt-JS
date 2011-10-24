@@ -130,7 +130,7 @@ body{
 #ducksKilled{
 	float:right;	
 }
-#loser,#winner,#level{
+#gameOver,#level{
 	text-align:center;
 	width:500px;
 	color:#ffffff;
