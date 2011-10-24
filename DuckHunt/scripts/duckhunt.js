@@ -252,7 +252,7 @@ var theGame = {
                         $("#gameOverMessage").html("You beat " + theGame.players[1].name + ", congratulations!");
                         document.getElementById("champSound").play();
                     } else {
-                        $("#gameOverMessage").html(theGame.players[1].name + " beat you, you shold practice more.");
+                        $("#gameOverMessage").html(theGame.players[1].name + " beat you, you should practice more.");
                         document.getElementById("loserSound").play();
                     }
                     theGame.multiplayerGame.signIn();
