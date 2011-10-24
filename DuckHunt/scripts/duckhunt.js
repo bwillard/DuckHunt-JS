@@ -234,7 +234,6 @@ var theGame = {
                         theGame.updateScore(-(theGame.killsThisLevel * theGame.pointsPerDuck));
                         $("#gameOverMessage").html("Are you kidding me with that?");
                         document.getElementById("loserSound").play();
-                        return false;
                     } else {
                         $("#gameOverMessage").html("You are a champion!");
                         document.getElementById("champSound").play();
@@ -259,27 +258,7 @@ var theGame = {
                     }, 2000);
                 }
             }
-
-            if ((theGame.currentLevel + 1) < levelArray.length) {
-                if (skills < 70) {
-
-                }
-
-
-            } else {
-                if (skills > 70) {
-
-                } else {
-                    theGame.updateScore(-(theGame.killsThisLevel * theGame.pointsPerDuck));
-                    $("#gameOverMessage").html("Are you kidding me with that?");
-                    $("#gameOver").css("display", "block");
-                    document.getElementById("loserSound").play();
-                    return false;
-                }
-            }
-
         }
-
     },
     waveCleared: function() {
         $("#gameField").unbind("mousedown");
