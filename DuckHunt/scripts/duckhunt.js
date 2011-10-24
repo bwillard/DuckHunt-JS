@@ -204,6 +204,7 @@ var theGame = {
             $("#ammo-p2").html("");
             $("#scoreboard-p2").html("");
             theGame.multiplayerGame.signIn();
+            $('#levelCreate').show();
             return;
         }
 
@@ -257,6 +258,7 @@ var theGame = {
                     }
                     theGame.multiplayerGame.signIn();
                     $(".tryAgain").css("display", "none");
+                    $("#game-definition").sho
                 }
                 $("#gameOver").css("display", "block");
                 $('#levelCreate').show();
@@ -621,6 +623,8 @@ function makeLevel(){
 	var LCwavetime = parseInt($("#LCwavetime").attr("value"));
 	var LCdif = parseInt($("#LCdif").attr("value"));
 	$("#sniffDog").stop();
+	theGame.isMaster = true;
+	$('#levelCreate').hide();
 	theGame.loadLevel("Custom Level",LCwaves,LCducks,LCdif,LCbullets,LCwavetime);		
 }
 
@@ -629,6 +633,7 @@ function tryAgain(){
 }
 
 function startSinglePlayer() {
+    theGame.isMaster = true;
     theGame.loadDefaultLevel(theGame.currentLevel);
     $('#levelCreate').hide();
 }
