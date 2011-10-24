@@ -19,7 +19,7 @@ var multiplayerGame = {
         multiplayerGame.myId = multiplayerGame.lobbyChannel.memberId;
 
         var adduser = function(id, name) {
-            if (id !== multiplayerGame.lobbyChannel.memberId) {
+        if (multiplayerGame.lobbyChannel && id !== multiplayerGame.lobbyChannel.memberId) {
                 log('adding user ' + name + ' ' + id + ' my id ' + multiplayerGame.lobbyChannel.memberId);
                 $('#users-list').append('<li id="user-' + id + '"><a href="#" onclick="multiplayerGame.requestGame(' + id + ')">Join ' + name + '</a></li>');
             }
