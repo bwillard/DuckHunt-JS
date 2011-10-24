@@ -84,6 +84,7 @@ var theGame = {
         $(".messages").css("display", "none");
         $(".gameinfo").css("display", "none");
         $("#gameField").unbind("mousedown");
+        $("#gameField").bind("mousedown", function() { theGame.shootGun(false); });
 
         //show the intro then load the wave
         theGame.intro(2000);
@@ -261,7 +262,6 @@ var theGame = {
         }
     },
     waveCleared: function() {
-        $("#gameField").unbind("mousedown");
         if (!theGame.clearingWave) {
             $("#gameField").animate({
                 backgroundColor: '#64b0ff'
@@ -288,11 +288,6 @@ var theGame = {
             });
             $(this).bind("mousedown", function() { theGame.shootDuck($(this).attr('id'), false) });
         });
-
-        //is seems if you bind twice without unbinding it doesn't work
-        //so make sure to unbind first
-        $("#gameField").unbind();
-        $("#gameField").bind("mousedown", function() { theGame.shootGun(false); });
         document.getElementById("quacking").play();
         theGame.quackID = setInterval(function() { document.getElementById("quacking").play(); }, 3000);
         clearTimeout(theGame.levelTimeID);
@@ -337,7 +332,11 @@ var theGame = {
     },
     shootGun: function(remoteAction) {
         if (!remoteAction) {
+            if (theGame.players[0].shotsThisWave == theGame.levelBullets) {
+                return;
+            }
             theGame.players[0].shotsThisWave++;
+
         }
         theGame.flashScreen();
         theGame.drawStatus();
@@ -494,7 +493,6 @@ var theGame = {
     },
     outOfAmmo: function(everyOneOutOfAmmo) {
         $(".ducks").unbind();
-        $("#gameField").unbind();
         if (everyOneOutOfAmmo) {
             theGame.clearingWave = false;
             setTimeout(theGame.flyAway(), 300);
@@ -515,7 +513,6 @@ var theGame = {
             clearTimeout(theGame.levelTimeID);
             theGame.flyAwayProg = true;
             $(".ducks").unbind();
-            $("#gameField").unbind();
 
             $("#gameField").animate({
                 backgroundColor: '#fbb4d4'
