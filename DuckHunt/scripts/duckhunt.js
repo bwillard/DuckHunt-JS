@@ -125,7 +125,7 @@ var theGame = {
         if (!theGame.isMaster) {
             //if we aren't the master there is no timer to end the game
             theGame.flyAway(true);
-            theGame.doWave(theGame.currentWave,true);
+            theGame.doWave(theGame.currentWave, true);
         }
     },
     openingScreen: function() {
@@ -200,8 +200,10 @@ var theGame = {
             $("#gameOver").css("display", "block");
             theGame.stopGameBecauseOfPlayerLeaving = false;
             theGame.players.pop();
+            $(".tryAgain").css("display", "none");
             $("#ammo-p1").html("");
             $("#scoreboard-p1").html("");
+            theGame.multiplayerGame.signIn();
             return;
         }
 
@@ -253,6 +255,7 @@ var theGame = {
                         $("#gameOverMessage").html(theGame.players[1].name + " beat you, you shold practice more.");
                         document.getElementById("loserSound").play();
                     }
+                    theGame.multiplayerGame.signIn();
                     $(".tryAgain").css("display", "none");
                 }
                 $("#gameOver").css("display", "block");
