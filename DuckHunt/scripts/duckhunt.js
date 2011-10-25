@@ -96,6 +96,15 @@ var theGame = {
     },
     initMultiplayer: function(multiplayerGame, isMaster) {
         theGame.multiplayerGame = multiplayerGame;
+
+        //reset the game
+        theGame.currentLevel = 0;
+        theGame.currentWave = 0;
+        theGame.players[0].score = 0;
+        theGame.players[0].shotsThisWave = 0;
+        theGame.duckID = 0;
+        theGame.duckMax = 0;
+
         theGame.players.push(new PlayerState());
         theGame.isMaster = isMaster;
         theGame.players[0].name = multiplayerGame.userName;
