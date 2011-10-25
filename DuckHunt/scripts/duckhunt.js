@@ -3,10 +3,12 @@
 		by Matthew Surabian - MattSurabian.com
 		A first draft...
 **************************************************/
-var levelArray = [["Level 1",3,2,5,3,13]/*,["Level 2",5,3,6,4,10],["Level 3",6,3,7,4,10],["Level 4",3,10,7,11,18],["Level 5",5,2,8,3,13], ["Level 6",1,15,8,15,25]*/];
+var levelArray = [["Level 1", 3, 2, 5, 3, 13], ["Level 2", 5, 3, 6, 4, 10], ["Level 3", 6, 3, 7, 4, 10], ["Level 4", 3, 10, 7, 11, 18], ["Level 5", 5, 2, 8, 3, 13], ["Level 6", 1, 15, 8, 15, 25]];
+//for quick testing
+//var levelArray = [["Level 1", 1, 2, 5, 3, 13]];
 $(document).ready(function() {
     //mute the sounds for debuging
-    //$(".sounds").attr("volume", "0");
+    $(".sounds").attr("volume", "0");
 
     $('.game-style').change(function(eventData) {
         if (eventData.currentTarget.value == 1) {
@@ -62,7 +64,6 @@ var theGame = {
     levelTimeID: 0,
     duckSpeed: 0,
     ducksAlive: 0,
-    ducksDead: 0,
     lastBang: 1,
     clearingWave: false,
     levelInProg: false,
@@ -217,7 +218,6 @@ var theGame = {
             theGame.drawStatus();
 
             theGame.ducksAlive = theGame.levelDucks;
-            theGame.ducksDead = 0;
             //add the ducks duckMax is for unique IDs
             //even when removed from the DOM old IDs anger the sprite engine
             theGame.duckMax = theGame.duckID + theGame.ducksAlive;
@@ -382,7 +382,6 @@ var theGame = {
     },
     shootDuck: function(id, remoteAction) {
         theGame.ducksAlive--;
-        theGame.ducksDead++;
         theGame.killsThisLevel++;
         $("#ducksKilled").append("<img src='images/duckDead.png'/>");
         $._spritely.instances[id].stop_random = true;
@@ -394,7 +393,7 @@ var theGame = {
         if (remoteAction) {
             document.getElementById("rats").play();
         } else {
-        
+
             theGame.updateScore(theGame.pointsPerDuck);
         }
 
@@ -409,6 +408,14 @@ var theGame = {
             clearInterval(theGame.quackID);
         }
 
+        var action = function() { };
+
+        if (theGame.ducksAlive == 0) {
+            action = function() {
+                setTimeout(function() { theGame.waveCleared(); }, 1000);
+            }
+        }
+
         setTimeout(function() {
             duck.spState(6);
             duck.spStart();
@@ -418,13 +425,10 @@ var theGame = {
                 document.getElementById("thud").play();
                 duck.destroy();
                 duck.attr("class", "deadDuck");
-                if (!remoteAction) {
+                if (remoteAction) {
+                    action();
+                } else {
                     theGame.dogPopUp();
-                }
-                else {
-                    if (theGame.ducksAlive == 0) {
-                        setTimeout(function() { theGame.waveCleared(); }, 1000);
-                    }
                 }
             });
         }, 500);

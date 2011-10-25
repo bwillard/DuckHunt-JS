@@ -14,6 +14,7 @@ var multiplayerGame = {
             return;
         }
 
+        $('#users-list').empty();
         multiplayerGame.lobbyChannel = multiplayerGame.xstreamly.subscribe("DuckLobby",
                 { includeMyMessages: true, userInfo: { name: multiplayerGame.userName} });
         multiplayerGame.myId = multiplayerGame.lobbyChannel.memberId;
@@ -125,6 +126,7 @@ var multiplayerGame = {
         }
         multiplayerGame.gameStateUpdated = undefined;
         multiplayerGame.gameChannel = undefined;
+        multiplayerGame.inGame = false;
     },
     stopGame: function() {
         if (multiplayerGame.inGame) {
