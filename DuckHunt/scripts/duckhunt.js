@@ -65,7 +65,6 @@ var theGame = {
     duckSpeed: 0,
     ducksAlive: 0,
     lastBang: 1,
-    clearingWave: false,
     levelInProg: false,
     flyAwayProg: false,
     flewAway: false,
@@ -160,9 +159,8 @@ var theGame = {
 
         //init the board, then to intro
         this.init();
-
     },
-
+    
     clearDucks: function() {
         $(".deadDuck").remove();
     },
@@ -177,10 +175,9 @@ var theGame = {
         theGame.killsThisLevel = 0;
         $("#ducksKilled").html("");
         theGame.doWave(theGame.currentWave);
-
     },
+    
     doWave: function(num, remoteAction) {
-
         if (theGame.isMaster) {
             if (remoteAction) {
                 return;
@@ -275,17 +272,13 @@ var theGame = {
         }
     },
     waveCleared: function() {
-        if (!theGame.clearingWave) {
-            $("#gameField").animate({
-                backgroundColor: '#64b0ff'
-            }, 500);
-            theGame.clearingWave = true;
-            theGame.drawDucks();
-            theGame.currentWave++;
-            theGame.doWave(theGame.currentWave);
+        $("#gameField").animate({
+            backgroundColor: '#64b0ff'
+        }, 500);
 
-            setTimeout(function() { theGame.clearingWave = false; }, 5000);
-        }
+        theGame.drawDucks();
+        theGame.currentWave++;
+        theGame.doWave(theGame.currentWave);
     },
     releaseTheDucks: function() {
         //animate the ducks
@@ -408,13 +401,7 @@ var theGame = {
             clearInterval(theGame.quackID);
         }
 
-        var action = function() { };
-
-        if (theGame.ducksAlive == 0) {
-            action = function() {
-                setTimeout(function() { theGame.waveCleared(); }, 1000);
-            }
-        }
+        var noDucksLeft = theGame.ducksAlive == 0;
 
         setTimeout(function() {
             duck.spState(6);
@@ -426,9 +413,11 @@ var theGame = {
                 duck.destroy();
                 duck.attr("class", "deadDuck");
                 if (remoteAction) {
-                    action();
+                    if(noDucksLeft){
+                        setTimeout(function() { theGame.waveCleared(); }, 1000);
+                    }
                 } else {
-                    theGame.dogPopUp();
+                    theGame.dogPopUp(noDucksLeft);
                 }
             });
         }, 500);
@@ -437,7 +426,7 @@ var theGame = {
             theGame.updateMultiplayer("shootDuck", id);
         }
     },
-    dogPopUp: function() {
+    dogPopUp: function(noDucksLeft) {
         if (!theGame.flyAwayProg) {
 
             $("#theDog").css("backgroundPosition", "0px 0px");
@@ -450,7 +439,7 @@ var theGame = {
                     $("#theDog").animate({
                         bottom: '-10'
                     }, 500, function() {
-                        if (theGame.ducksAlive == 0) {
+                        if (noDucksLeft) {
                             setTimeout(function() { theGame.waveCleared(); }, 1000);
                         }
                     });
@@ -523,7 +512,6 @@ var theGame = {
     outOfAmmo: function(everyOneOutOfAmmo) {
         $(".ducks").unbind();
         if (everyOneOutOfAmmo) {
-            theGame.clearingWave = false;
             setTimeout(theGame.flyAway(), 300);
         }
     },
