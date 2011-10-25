@@ -160,7 +160,7 @@ var theGame = {
         //init the board, then to intro
         this.init();
     },
-    
+
     clearDucks: function() {
         $(".deadDuck").remove();
     },
@@ -176,7 +176,7 @@ var theGame = {
         $("#ducksKilled").html("");
         theGame.doWave(theGame.currentWave);
     },
-    
+
     doWave: function(num, remoteAction) {
         if (theGame.isMaster) {
             if (remoteAction) {
@@ -227,7 +227,7 @@ var theGame = {
                 $(theGame.playfield).append('<div id="theDuck' + i + '" class="ducks ' + duckClass + '"></div>');
             }
             theGame.duckID = theGame.duckMax;
-            $("#waves").html("WAVE " + (theGame.currentWave + 1) + " of " + theGame.levelWaves);
+            $("#waves").html("WAVE " + (num + 1) + " of " + theGame.levelWaves);
 
             theGame.releaseTheDucks();
         } else {
@@ -413,7 +413,7 @@ var theGame = {
                 duck.destroy();
                 duck.attr("class", "deadDuck");
                 if (remoteAction) {
-                    if(noDucksLeft){
+                    if (noDucksLeft) {
                         setTimeout(function() { theGame.waveCleared(); }, 1000);
                     }
                 } else {
