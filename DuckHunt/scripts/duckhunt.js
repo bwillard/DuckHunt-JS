@@ -8,7 +8,7 @@ var levelArray = [["Level 1", 3, 2, 5, 3, 13], ["Level 2", 5, 3, 6, 4, 10], ["Le
 //var levelArray = [["Level 1", 1, 2, 5, 3, 13]];
 $(document).ready(function() {
     //mute the sounds for debuging
-    $(".sounds").attr("volume", "0");
+    //$(".sounds").attr("volume", "0");
 
     $('.game-style').change(function(eventData) {
         if (eventData.currentTarget.value == 1) {
